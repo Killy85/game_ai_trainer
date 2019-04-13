@@ -14,6 +14,12 @@ Description :
 
 """
 
+# couleurs
+black = (0, 0, 0)
+red = (255, 0, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+white = (255, 255, 255)
 
 #Fonction pour charger les images
 def load_image(name, colorkey=None):
@@ -139,6 +145,7 @@ class Raquette(sprite.Sprite):
         if self.flag == 'p':
             self.flag = 1
 
+
 class Game_adapted():
 
     def __init__(self):
@@ -184,140 +191,138 @@ class Game_adapted():
         b.pause()
         j.pause()
 
+    def update_frame(self):
+        for self.e in event.get():
+            if self.e.type == KEYDOWN and (self.e.unicode == 'q' or self.e.unicode == 'Q'):
+                self.flag1 = False
+            if self.e.type == KEYDOWN and (self.e.unicode == 'n' or self.e.unicode == 'N'):
+                global b, j, brs
+                b, j, self.bs, self.js, brs = self.initialisation(self.screen)
+                flag2 = True
+                self.leftDown = False
+                self.rightDown = False
+                while flag2:
+                    self.chrono.tick(60)
+                    for self.e in event.get():
+                        if self.e.type == KEYDOWN and self.e.key == K_ESCAPE:
+                            # Retour au menu précédent
+                            flag2 = False
+                        if self.e.type == KEYDOWN and self.e.key == K_RETURN:
+                            # Lancement de la partie
+                            self.start()
+                        if self.e.type == KEYDOWN and self.e.key == K_p:
+                            # La partie entre en pause
+                            self.pause()
+                            msg4 = self.cadre.render('PAUSE', 0, black)
+                            pos_msg4 = msg4.get_rect()
+                            pos_msg4.center = self.area.center
+                            self.screen.blit(msg4, pos_msg4)
+                            display.flip()
+                            flag3 = True
+                            while flag3:
+                                for e in event.get():
+                                    if e.type == KEYDOWN and e.key == K_p:
+                                        flag3 = False
+                            self.pause()
+                    # Contréler la raquette
+                    if self.e.type == KEYDOWN:
+                        if self.e.key == K_RIGHT:
+                            j.right(self.rightDown)
+                            rightDown = True
+                    if self.e.type == KEYUP:
+                        if self.e.key == K_RIGHT:
+                            rightDown = False
+                    if self.e.type == KEYDOWN:
+                        if self.e.key == K_LEFT:
+                            j.left(self.leftDown)
+                            leftDown = True
+                    if self.e.type == KEYUP:
+                        if self.e.key == K_LEFT:
+                            leftDown = False
+                    if j.vies == 0:
+                        # Si le joueur n'a plus de vies
+                        msg5 = self.cadre.render("Vous avez perdu. Votre score:", 0, black)
+                        msg6 = self.cadre.render(str(j.score), 0, black)
+                        pos_msg5 = msg5.get_rect()
+                        pos_msg5.center = self.area.center
+                        pos_msg6 = msg6.get_rect()
+                        pos_msg6.center = self.area.center
+                        pos_msg6.centery = self.area.centery + 50
+                        # Affichage à l'écran
+                        self.screen.fill(red)
+                        self.screen.blit(msg5, pos_msg5)
+                        self.screen.blit(msg6, pos_msg6)
+                        display.flip()
+                        flag4 = True
+                        while flag4:
+                            for self.e in event.get():
+                                if self.e.type == KEYDOWN and self.e.key == K_ESCAPE:
+                                    flag4 = False
+                                    flag2 = False
+                    if len(brs) == 0:
+                        # S'il n'y a plus de briques
+                        msg7 = self.cadre.render("Vous avez gagné. Votre score:",
+                                            0, black)
+                        msg8 = self.cadre.render(str(j.score), 0, black)
+                        pos_msg7 = msg7.get_rect()
+                        pos_msg7.center = self.area.center
+                        pos_msg8 = msg8.get_rect()
+                        pos_msg8.center = self.area.center
+                        pos_msg8.centery = self.area.centery + 50
+                        # Affichage à l'écran
+                        self.screen.fill(green)
+                        self.screen.blit(msg7, pos_msg7)
+                        self.screen.blit(msg8, pos_msg8)
+                        display.flip()
+                        flag5 = True
+                        while flag5:
+                            for e in event.get():
+                                if e.type == KEYDOWN and e.key == K_ESCAPE:
+                                    flag5 = False
+                                    flag2 = False
+                    # Rafraichissement de l'écran pendant le jeu
+                    self.screen.fill(blue)
+                    self.bs.update()
+                    self.js.update()
+                    self.bs.draw(self.screen)
+                    self.js.draw(self.screen)
+                    brs.draw(self.screen)
+                    display.flip()
+        # Rafrachissement de l'écran d'accueil
+        self.screen.fill(black)
+        self.screen.blit(self.message, self.pos_message)
+        self.screen.blit(self.quitmsg, self.pos_quitmsg)
+        self.screen.blit(self.msg1, self.pos_msg1)
+        display.flip()
+
+
     def main(self):
-        #couleurs
-        black = (0, 0, 0)
-        red = (255, 0, 0)
-        green = (0, 255, 0)
-        blue = (0, 0, 255)
-        white = (255, 255, 255)
         #Initialisation de l'écran
         init()
-        screen = display.set_mode((520, 550))
+        self.screen = display.set_mode((520, 550))
         display.set_caption('Casse Briques v.1.1.')
         icon, icon_rect = load_image('icon.GIF')
         display.set_icon(icon)
-        area = screen.get_rect()
-        screen.fill((0, 0, 0))
+        self.area = self.screen.get_rect()
+        self.screen.fill((0, 0, 0))
         display.flip()
         #Accueil
-        cadre = font.Font(None, 35)
-        message = cadre.render("Bienvenue dans Casse Briques v.1.1.", 0, white)
-        quitmsg = cadre.render("Quitter:Q", 0, red)
-        pos_message = message.get_rect()
-        pos_message.center = area.center
-        pos_message.centery = 50
-        pos_quitmsg = quitmsg.get_rect()
-        pos_quitmsg.center = area.center
-        pos_quitmsg.centery = 500
-        msg1 = cadre.render("Nouvelle partie : N", 0, green)
-        pos_msg1 = msg1.get_rect()
-        pos_msg1.topleft = (50, 200)
-        chrono = time.Clock()
-        flag1 = True
-        while flag1:
-            for e in event.get():
-                if e.type == KEYDOWN and (e.unicode == 'q' or e.unicode == 'Q'):
-                    flag1 = False
-                if e.type == KEYDOWN and (e.unicode == 'n' or e.unicode == 'N'):
-                    global b, j, brs
-                    b, j, bs, js, brs = self.initialisation(screen)
-                    flag2 = True
-                    leftDown = False
-                    rightDown = False
-                    while flag2:
-                        chrono.tick(60)
-                        for e in event.get():
-                            if e.type == KEYDOWN and e.key == K_ESCAPE:
-                                #Retour au menu précédent
-                                flag2 = False
-                            if e.type == KEYDOWN and e.key == K_RETURN:
-                                #Lancement de la partie
-                                self.start()
-                            if e.type == KEYDOWN and e.key == K_p:
-                                #La partie entre en pause
-                                self.pause()
-                                msg4 = cadre.render('PAUSE', 0, black)
-                                pos_msg4 = msg4.get_rect()
-                                pos_msg4.center = area.center
-                                screen.blit(msg4, pos_msg4)
-                                display.flip()
-                                flag3 = True
-                                while flag3:
-                                    for e in event.get():
-                                        if e.type == KEYDOWN and e.key == K_p:
-                                            flag3 = False
-                                self.pause()
-                        #Contréler la raquette
-                        if e.type == KEYDOWN:
-                            if e.key == K_RIGHT:
-                                j.right(rightDown)
-                                rightDown = True
-                        if e.type == KEYUP:
-                            if e.key == K_RIGHT:
-                                rightDown = False
-                        if e.type == KEYDOWN:
-                            if e.key == K_LEFT:
-                                j.left(leftDown)
-                                leftDown = True
-                        if e.type == KEYUP:
-                            if e.key == K_LEFT:
-                                leftDown = False
-                        if j.vies == 0:
-                            #Si le joueur n'a plus de vies
-                            msg5 = cadre.render("Vous avez perdu. Votre score:", 0, black)
-                            msg6 = cadre.render(str(j.score), 0, black)
-                            pos_msg5 = msg5.get_rect()
-                            pos_msg5.center = area.center
-                            pos_msg6 = msg6.get_rect()
-                            pos_msg6.center = area.center
-                            pos_msg6.centery = area.centery + 50
-                            #Affichage à l'écran
-                            screen.fill(red)
-                            screen.blit(msg5, pos_msg5)
-                            screen.blit(msg6, pos_msg6)
-                            display.flip()
-                            flag4 = True
-                            while flag4:
-                                for e in event.get():
-                                    if e.type == KEYDOWN and e.key == K_ESCAPE:
-                                        flag4 = False
-                                        flag2 = False
-                        if len(brs) == 0:
-                            #S'il n'y a plus de briques
-                            msg7 = cadre.render("Vous avez gagné. Votre score:",
-                                                0, black)
-                            msg8 = cadre.render(str(j.score), 0, black)
-                            pos_msg7 = msg7.get_rect()
-                            pos_msg7.center = area.center
-                            pos_msg8 = msg8.get_rect()
-                            pos_msg8.center = area.center
-                            pos_msg8.centery = area.centery + 50
-                            #Affichage à l'écran
-                            screen.fill(green)
-                            screen.blit(msg7, pos_msg7)
-                            screen.blit(msg8, pos_msg8)
-                            display.flip()
-                            flag5 = True
-                            while flag5:
-                                for e in event.get():
-                                    if e.type == KEYDOWN and e.key == K_ESCAPE:
-                                        flag5 = False
-                                        flag2 = False
-                        #Rafraichissement de l'écran pendant le jeu
-                        screen.fill(blue)
-                        bs.update()
-                        js.update()
-                        bs.draw(screen)
-                        js.draw(screen)
-                        brs.draw(screen)
-                        display.flip()
-            #Rafrachissement de l'écran d'accueil
-            screen.fill(black)
-            screen.blit(message, pos_message)
-            screen.blit(quitmsg, pos_quitmsg)
-            screen.blit(msg1, pos_msg1)
-            display.flip()
+        self.cadre = font.Font(None, 35)
+        self.message = self.cadre.render("Bienvenue dans Casse Briques v.1.1.", 0, white)
+        self.quitmsg = self.cadre.render("Quitter:Q", 0, red)
+        self.pos_message = self.message.get_rect()
+        self.pos_message.center = self.area.center
+        self.pos_message.centery = 50
+        self.pos_quitmsg = self.quitmsg.get_rect()
+        self.pos_quitmsg.center = self.area.center
+        self.pos_quitmsg.centery = 500
+        self.msg1 = self.cadre.render("Nouvelle partie : N", 0, green)
+        self.pos_msg1 = self.msg1.get_rect()
+        self.pos_msg1.topleft = (50, 200)
+        self.chrono = time.Clock()
+        self.flag1 = True
+        while self.flag1:
+            self.update_frame()
         quit()
 
 if __name__ == '__main__':
