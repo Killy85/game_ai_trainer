@@ -8,41 +8,41 @@ import os
 
 from collections import deque
 
-STATES = {
-        1: (0, 0),
-        2: (0, 1),
-        3: (0, 2),
-        4: (1, 0),
-        5: (1, 1),
-        6: (1, 2),
-        7: (2, 0),
-        8: (2, 1),
-        9: (2, 2),
-        10: (3, 0),
-        11: (3, 1),
-        12: (3, 2),
-        13: (4, 0),
-        14: (4, 1),
-        15: (4, 2),
-        16: (5, 0),
-        17: (5, 1),
-        18: (5, 2),
-        19: (6, 0),
-        20: (6, 1),
-        21: (6, 2),
-        22: (7, 0),
-        23: (7, 1),
-        24: (7, 2),
-        25: (8, 0),
-        26: (8, 1),
-        27: (8, 2),
-        28: (9, 0),
-        29: (9, 1),
-        30: (9, 2),
-        31: (10, 0),
-        32: (10, 1),
-        33: (10, 2)
-    }
+STATES = [
+        (0, 0),
+        (0, 1),
+        (0, 2),
+        (1, 0),
+        (1, 1),
+        (1, 2),
+        (2, 0),
+        (2, 1),
+        (2, 2),
+        (3, 0),
+        (3, 1),
+        (3, 2),
+        (4, 0),
+        (4, 1),
+        (4, 2),
+        (5, 0),
+        (5, 1),
+        (5, 2),
+        (6, 0),
+        (6, 1),
+        (6, 2),
+        (7, 0),
+        (7, 1),
+        (7, 2),
+        (8, 0),
+        (8, 1),
+        (8, 2),
+        (9, 0),
+        (9, 1),
+        (9, 2),
+        (10, 0),
+        (10, 1),
+        (10, 2)
+    ]
 
 class Trainer:
     def __init__(self, name=None, learning_rate=0.01, epsilon_decay=0.9999):
@@ -107,15 +107,19 @@ def train(episodes, trainer, game):
     scores = []
     losses = [0]
     for e in range(episodes):
-        state = game.reset()
-        
+        state_tuple = game.reset()
+        # Here we imagine that state_tuple is a tuple (x,y)
+        # which correspond to one of our state defined
+        # at the beginning of the document
+        state = [1 if elem == state_tuple else 0 for elem in STATES]
         score = 0  # score in current game
         done = False
         steps = 0  # steps in current game
         while not done:
             steps += 1
             action = trainer.get_best_action(state)
-            next_state, reward, done, _ = game.move(action)
+            next_state_tuple, reward, done, _ = game.move(action)
+            next_state = [1 if elem == next_state_tuple else 0 for elem in STATES]
             score += reward
             trainer.train(state, action, reward, next_state, done)
             #print(state.index(1), Game.ACTION_NAMES[action], reward, 
