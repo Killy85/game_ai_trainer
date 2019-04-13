@@ -8,14 +8,10 @@ from operator import add
 
 
 class BreakoutAgent(object):
-"""This agent aim a learning to play a breakout game
 
-Using Q-learning and neural network we create an agent able to learn how to play
-a game.
-"""
     def __init__(self):
-    """Initialize the value of the agent
-    """
+        """Initialize the value of the agent
+        """
 
         self.reward = 0
         self.gamma = 0.9
@@ -32,11 +28,11 @@ a game.
 
     def get_state(self, game, player):
         """Return the state of the environnement
-        
+
         Arguments:
             game {Game} -- Object describing all items in the game
             player {Player} -- Object describing the attributes of the player
-        
+
         Returns:
             npArray -- This different boolean state of the player
         """
@@ -52,18 +48,38 @@ a game.
 
         return np.asarray(state)
 
-    def set_reward(self, player, crash):
+    def set_reward(self, ball, brick_destroyed):
+        """Compute the reward for the last agent action
+
+        Arguments:
+            ball {Object} -- Object describing if the ball is lost or has bounced
+            brick_destroyed {Array} -- Id of bricks that has been destroyed since last call
+
+        Returns:
+            integer -- The reward for the last agent action
+        """
+
         self.reward = 0
-        if ball_loosed:
+        if ball.loosed:
             self.reward = -100
             return self.reward
-        if ball_bounce:
+        if ball.bounce:
             self.reward += 5
-        if brick_destroyed:
-            self.reward += 1 * len(brick_destroyed)
+        #if brick_destroyed:
+        #    self.reward += 1 * len(brick_destroyed)
+        # This is a possible devellopement for the training
         return self.reward
 
     def network(self, weights=None):
+        """Create a models based on a neural network
+
+        Keyword Arguments:
+            weights  -- Weight to load on the model(default: {None})
+
+        Returns:
+            Sequential -- the model we will use during our game
+        """
+
         model = Sequential()
         model.add(Dense(output_dim=120, activation='relu', input_dim=11))
         model.add(Dropout(0.15))
@@ -80,9 +96,25 @@ a game.
         return model
 
     def remember(self, state, action, reward, next_state, done):
+        """Store into the agent last part of the learning
+
+        Arguments:
+            state {Array} -- [description]
+            action {Integer} -- [description]
+            reward {Integer} -- [description]
+            next_state {Array} -- [description]
+            done {function} -- [description]
+        """
+
         self.memory.append((state, action, reward, next_state, done))
 
     def replay_new(self, memory):
+        """[summary]
+
+        Arguments:
+            memory {[type]} -- [description]
+        """
+
         if len(memory) > 1000:
             minibatch = random.sample(memory, 1000)
         else:
@@ -90,15 +122,28 @@ a game.
         for state, action, reward, next_state, done in minibatch:
             target = reward
             if not done:
-                target = reward + self.gamma * np.amax(self.model.predict(np.array([next_state]))[0])
+                target = reward + self.gamma * np.amax(
+                    self.model.predict(np.array([next_state]))[0])
             target_f = self.model.predict(np.array([state]))
             target_f[0][np.argmax(action)] = target
             self.model.fit(np.array([state]), target_f, epochs=1, verbose=0)
 
     def train_short_memory(self, state, action, reward, next_state, done):
+        """[summary]
+
+        Arguments:
+            state {[type]} -- [description]
+            action {[type]} -- [description]
+            reward {[type]} -- [description]
+            next_state {[type]} -- [description]
+            done {function} -- [description]
+        """
+
         target = reward
         if not done:
-            target = reward + self.gamma * np.amax(self.model.predict(next_state.reshape((1, 11)))[0])
+            target = reward + self.gamma * np.amax(
+                self.model.predict(next_state.reshape((1, 11)))[0])
         target_f = self.model.predict(state.reshape((1, 11)))
         target_f[0][np.argmax(action)] = target
-        self.model.fit(state.reshape((1, 11)), target_f, epochs=1, verbose=0)
+        self.model.fit(state.reshape((1, 11)),
+                target_f, epochs=1, verbose=0)
