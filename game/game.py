@@ -17,7 +17,6 @@ def load_image(name, colorkey=None):
 
 class Brique(sprite.Sprite):
     """Les briques sont détruites par la balle."""
-    
     def __init__(self, screen, x, y):
         sprite.Sprite.__init__(self)
         self.screen = screen
@@ -27,12 +26,11 @@ class Brique(sprite.Sprite):
 
 class Balle(sprite.Sprite):
     """Une balle qui se déplace sur l'écran."""
-
     def __init__(self, screen):
         sprite.Sprite.__init__(self)
         self.screen = screen
         self.area = self.screen.get_rect()
-        self.image, self.rect = load_image('balle.GIF',-1)
+        self.image, self.rect = load_image('balle.GIF', -1)
         self.reinit()
 
     def reinit(self):
@@ -47,20 +45,20 @@ class Balle(sprite.Sprite):
             self.rect = self.rect.move(dx, dy)
             #Collision sur les parois de l'écran
             if not self.area.contains(self.rect):
-                    tl = not self.area.collidepoint(self.rect.topleft)
-                    tr = not self.area.collidepoint(self.rect.topright)
-                    bl = not self.area.collidepoint(self.rect.bottomleft)
-                    br = not self.area.collidepoint(self.rect.bottomright)
-                    if tr and tl or (br and bl):
-                        self.angle = -self.angle
-                    if tl and bl:
-                        self.angle = pi - self.angle
-                    if tr and br:
-                        self.angle = pi - self.angle
-                    if bl and br:
-                        self.reinit()
-                        j.reinit()
-                        j.vies = j.vies - 1
+                tl = not self.area.collidepoint(self.rect.topleft)
+                tr = not self.area.collidepoint(self.rect.topright)
+                bl = not self.area.collidepoint(self.rect.bottomleft)
+                br = not self.area.collidepoint(self.rect.bottomright)
+                if tr and tl or (br and bl):
+                    self.angle = -self.angle
+                if tl and bl:
+                    self.angle = pi - self.angle
+                if tr and br:
+                    self.angle = pi - self.angle
+                if bl and br:
+                    self.reinit()
+                    j.reinit()
+                    j.vies = j.vies - 1
             #Collision avec la raquette du joueur
             elif self.rect.colliderect(j.rect):
                 self.rect.bottom = j.rect.top
@@ -82,14 +80,13 @@ class Balle(sprite.Sprite):
 
 class Raquette(sprite.Sprite):
     """Une raquette pour empécher la balle de tomber."""
-
     def __init__(self, screen):
         sprite.Sprite.__init__(self)
         self.image, self.rect = load_image('raquette.GIF')
         self.screen = screen
         self.area = self.screen.get_rect()
         self.score = 0
-        self.vies = 5
+        self.vies = 1
         self.font1 = font.Font(None, 25)
         self.font2 = font.Font(None, 25)
         self.reinit()
@@ -197,14 +194,8 @@ def main():
     pos_quitmsg.center = area.center
     pos_quitmsg.centery = 500
     msg1 = cadre.render("Nouvelle partie : N", 0, green)
-    msg2 = cadre.render("Aide : A", 0, green)
-    msg3 = cadre.render("License : L", 0, green)
     pos_msg1 = msg1.get_rect()
     pos_msg1.topleft = (50, 200)
-    pos_msg2 = msg2.get_rect()
-    pos_msg2.topleft = (50, 250)
-    pos_msg3 = msg3.get_rect()
-    pos_msg3.topleft = (50, 300)
     chrono = time.Clock()
     flag1 = True
     while flag1:
@@ -277,7 +268,7 @@ def main():
                                     flag2 = False
                     if len(brs) == 0:
                         #S'il n'y a plus de briques
-                        msg7 = cadre.render("Vous avez gagn�. Votre score:",
+                        msg7 = cadre.render("Vous avez gagné. Votre score:",
                                             0, black)
                         msg8 = cadre.render(str(j.score), 0, black)
                         pos_msg7 = msg7.get_rect()
@@ -304,43 +295,11 @@ def main():
                     js.draw(screen)
                     brs.draw(screen)
                     display.flip()
-            if e.type == KEYDOWN and (e.unicode == 'l' or e.unicode == 'L'):
-                lic,lic_pos = load_image('license.GIF', -1)
-                msg9 = cadre.render('Retour:Echap', 0, red)
-                pos_msg9 = msg9.get_rect()
-                pos_msg9.centery = 530
-                #Affichage à l'écran
-                screen.fill(green)
-                screen.blit(msg9, pos_msg9)
-                screen.blit(lic, lic_pos)
-                display.flip()
-                flag6 = True
-                while flag6:
-                    for e in event.get():
-                        if e.type == KEYDOWN and e.key == K_ESCAPE:
-                            flag6 = False
-            if e.type == KEYDOWN and (e.unicode == 'a' or e.unicode == 'A'):
-                aide, aide_pos = load_image('aide.GIF', -1)
-                msg10 = cadre.render('Retour:Echap', 0, red)
-                pos_msg10 = msg10.get_rect()
-                pos_msg10.centery = 530
-                #Affichage à l'écran
-                screen.fill(green)
-                screen.blit(msg10, pos_msg10)
-                screen.blit(aide, aide_pos)
-                display.flip()
-                flag7 = True
-                while flag7:
-                    for e in event.get():
-                        if e.type == KEYDOWN and e.key == K_ESCAPE:
-                            flag7 = False
         #Rafrachissement de l'écran d'accueil
         screen.fill(black)
         screen.blit(message, pos_message)
         screen.blit(quitmsg, pos_quitmsg)
         screen.blit(msg1, pos_msg1)
-        screen.blit(msg2, pos_msg2)
-        screen.blit(msg3, pos_msg3)
         display.flip()
     quit()
 
