@@ -49,6 +49,8 @@ class Balle(sprite.Sprite):
         self.area = self.screen.get_rect()
         self.image, self.rect = load_image('balle.GIF', -1)
         self.reinit()
+        self.is_lauched = False
+        self.has_bounced = False
 
     def reinit(self):
         self.rect.centerx = self.area.centerx
@@ -80,6 +82,7 @@ class Balle(sprite.Sprite):
             elif self.rect.colliderect(j.rect):
                 self.rect.bottom = j.rect.top
                 self.angle = -self.angle
+                self.has_bounced = True
             #Collision avec une brique du groupe briquesprite
             collision = sprite.spritecollide(self, brs, 1)
             if collision:
@@ -103,7 +106,8 @@ class Raquette(sprite.Sprite):
         self.screen = screen
         self.area = self.screen.get_rect()
         self.score = 0
-        self.vies = 1
+        self.vies_max = 5
+        self.vies = self.vies_max
         self.font1 = font.Font(None, 25)
         self.font2 = font.Font(None, 25)
         self.reinit()
@@ -194,6 +198,8 @@ class Game_adapted():
     def update_frame(self, movement):
         reward = 0
         rectPos = j.rect.x
+        startBrs = len(brs)
+        start_vie = j.vies
         #flag2 = True
         for p in range(30): # while flag2:
             self.chrono.tick(60)
@@ -218,17 +224,11 @@ class Game_adapted():
                 self.screen.blit(msg5, pos_msg5)
                 self.screen.blit(msg6, pos_msg6)
                 display.flip()
-                flag4 = True
-                while flag4:
-                    for self.e in event.get():
-                        if self.e.type == KEYDOWN and self.e.key == K_ESCAPE:
-                            flag4 = False
-                            flag2 = False
-                            # METTRE UNE MAUVAISE NOTE A L'IA CAR IL A PERDU
+                reward -= 100;
+                j.vies = j.vies_max
             if len(brs) == 0:
                 # S'il n'y a plus de briques
-                msg7 = self.cadre.render("Vous avez gagné. Votre score:",
-                                    0, black)
+                msg7 = self.cadre.render("Vous avez gagné. Votre score:", 0, black)
                 msg8 = self.cadre.render(str(j.score), 0, black)
                 pos_msg7 = msg7.get_rect()
                 pos_msg7.center = self.area.center
@@ -246,6 +246,9 @@ class Game_adapted():
                         if e.type == KEYDOWN and e.key == K_ESCAPE:
                             flag5 = False
                             flag2 = False
+            if(self.b.has_bounced and self.b.is_lauched):
+                reward += 5
+                self.b.has_bounced = False
             # Rafraichissement de l'écran pendant le jeu
             self.screen.fill(blue)
             self.bs.update()
@@ -255,6 +258,12 @@ class Game_adapted():
             brs.draw(self.screen)
             display.flip()
 
+        brick_reward = startBrs - len(brs) * 5
+        life_reward = ((start_vie - j.vies) * -100)
+        self.b.is_lauched = True
+        if(start_vie - j.vies): self.b.is_lauched = False
+        self.b.has_bounced = False
+        return (j.rect.x, self.b.rect.x), reward+life_reward, (start_vie == 1 and j.vies == 5)
 
     def main(self):
         #Initialisation de l'écran
