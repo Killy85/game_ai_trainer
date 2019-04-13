@@ -6,8 +6,6 @@ import random
 import time
 import os
 
-from collections import deque
-
 STATES = {
         1: (0, 0),
         2: (0, 1),
