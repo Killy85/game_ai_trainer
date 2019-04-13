@@ -199,8 +199,8 @@ class Game_adapted():
                 global b, j, brs
                 b, j, self.bs, self.js, brs = self.initialisation(self.screen)
                 flag2 = True
-                self.leftDown = False
-                self.rightDown = False
+                leftDown = False
+                rightDown = False
                 while flag2:
                     self.chrono.tick(60)
                     for self.e in event.get():
@@ -227,14 +227,14 @@ class Game_adapted():
                     # Contréler la raquette
                     if self.e.type == KEYDOWN:
                         if self.e.key == K_RIGHT:
-                            j.right(self.rightDown)
+                            j.right(rightDown)
                             rightDown = True
                     if self.e.type == KEYUP:
                         if self.e.key == K_RIGHT:
                             rightDown = False
                     if self.e.type == KEYDOWN:
                         if self.e.key == K_LEFT:
-                            j.left(self.leftDown)
+                            j.left(leftDown)
                             leftDown = True
                     if self.e.type == KEYUP:
                         if self.e.key == K_LEFT:
