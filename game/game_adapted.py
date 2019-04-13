@@ -54,7 +54,7 @@ class Balle(sprite.Sprite):
         self.rect.centerx = self.area.centerx
         self.rect.centery = 500
         self.angle = pi/3.3
-        self.flag = 0
+        self.flag = 1
 
     def update(self):
         if self.flag == 1:
@@ -121,15 +121,15 @@ class Raquette(sprite.Sprite):
         self.rect.centery = 510
         self.flag = 0
 
-    def left(self, leftDown):
-        if self.flag == 1 and leftDown == False:
+    def left(self):
+        if self.flag == 0:
             rect = self.rect.move((-60, 0))
             if rect.left < 0:
                 rect.left = 0
             self.rect = rect
 
-    def right(self, rightDown):
-        if self.flag == 1 and rightDown == False:
+    def right(self):
+        if self.flag == 0:
             rect = self.rect.move((60, 0))
             if rect.right > self.area.right:
                 rect.right = self.area.right
@@ -184,57 +184,26 @@ class Game_adapted():
         return balle, joueur, ballesprite, joueursprite, briquesprite
 
     def start(self):
-        b.start()
+        self.b.start()
         j.start()
 
     def pause(self):
-        b.pause()
+        self.b.pause()
         j.pause()
 
-    def update_frame(self):
-        global b, j, brs
-        b, j, self.bs, self.js, brs = self.initialisation(self.screen)
-        flag2 = True
-        leftDown = False
-        rightDown = False
-        while flag2:
+    def update_frame(self, movement):
+        reward = 0
+        rectPos = j.rect.x
+        #flag2 = True
+        for p in range(30): # while flag2:
             self.chrono.tick(60)
-            for self.e in event.get():
-                if self.e.type == KEYDOWN and self.e.key == K_ESCAPE:
-                    # Retour au menu précédent
-                    flag2 = False
-                if self.e.type == KEYDOWN and self.e.key == K_RETURN:
-                    # Lancement de la partie
-                    self.start()
-                if self.e.type == KEYDOWN and self.e.key == K_p:
-                    # La partie entre en pause
-                    self.pause()
-                    msg4 = self.cadre.render('PAUSE', 0, black)
-                    pos_msg4 = msg4.get_rect()
-                    pos_msg4.center = self.area.center
-                    self.screen.blit(msg4, pos_msg4)
-                    display.flip()
-                    flag3 = True
-                    while flag3:
-                        for e in event.get():
-                            if e.type == KEYDOWN and e.key == K_p:
-                                flag3 = False
-                    self.pause()
             # Contréler la raquette
-            if self.e.type == KEYDOWN:
-                if self.e.key == K_RIGHT:
-                    j.right(rightDown)
-                    rightDown = True
-            if self.e.type == KEYUP:
-                if self.e.key == K_RIGHT:
-                    rightDown = False
-            if self.e.type == KEYDOWN:
-                if self.e.key == K_LEFT:
-                    j.left(leftDown)
-                    leftDown = True
-            if self.e.type == KEYUP:
-                if self.e.key == K_LEFT:
-                    leftDown = False
+            if(movement == 2 and p == 5):
+                # Deplacement de la barre vers la droite
+                j.right()
+            if(movement == 0 and p == 5):
+                # Deplacement de la barre vers la gauche
+                j.left()
             if j.vies == 0:
                 # Si le joueur n'a plus de vies
                 msg5 = self.cadre.render("Vous avez perdu. Votre score:", 0, black)
@@ -255,6 +224,7 @@ class Game_adapted():
                         if self.e.type == KEYDOWN and self.e.key == K_ESCAPE:
                             flag4 = False
                             flag2 = False
+                            # METTRE UNE MAUVAISE NOTE A L'IA CAR IL A PERDU
             if len(brs) == 0:
                 # S'il n'y a plus de briques
                 msg7 = self.cadre.render("Vous avez gagné. Votre score:",
@@ -289,7 +259,7 @@ class Game_adapted():
     def main(self):
         #Initialisation de l'écran
         init()
-        self.screen = display.set_mode((520, 550))
+        self.screen = display.set_mode((540, 550))
         display.set_caption('Casse Briques v.1.1.')
         icon, icon_rect = load_image('icon.GIF')
         display.set_icon(icon)
@@ -299,10 +269,8 @@ class Game_adapted():
         #Accueil
         self.cadre = font.Font(None, 35)
         self.chrono = time.Clock()
-        self.flag1 = True
-        while self.flag1:
-            self.update_frame()
-        quit()
+        global j, brs
+        self.b, j, self.bs, self.js, brs = self.initialisation(self.screen)
 
 if __name__ == '__main__':
     Game_adapted().main()

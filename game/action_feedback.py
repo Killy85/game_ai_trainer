@@ -7,7 +7,7 @@ L'bojet qui est renvoyé à l'ia
 
 
 
-class action_feedback():
+class Action_feedback():
 
     """ init """
     def __init__(self, x_bar, x_bal, reward, partie_en_cours):
