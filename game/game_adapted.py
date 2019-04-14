@@ -1,4 +1,6 @@
 # -*- coding: cp1252 -*-
+from random import random
+
 from pygame import *
 from math import cos, sin, pi
 import os.path
@@ -55,7 +57,7 @@ class Balle(sprite.Sprite):
     def reinit(self):
         self.rect.centerx = self.area.centerx
         self.rect.centery = 500
-        self.angle = pi/3.3
+        self.angle = random() * 2.74 + 0.2 # pi/3.3
         self.flag = 1
 
     def update(self):
@@ -266,6 +268,10 @@ class Game_adapted():
         self.b.is_lauched = True
         if(start_vie - j.vies): self.b.is_lauched = False
         self.b.has_bounced = False
+        # 1 : position du centre de la raquette
+        # 2 : position du centre de la balle
+        # 3 : raward
+        # 4 : wtf ?
         return (j.rect.x, self.b.rect.x), reward+life_reward, (start_vie == 1 and j.vies == 5)
 
     def main(self):
