@@ -228,6 +228,7 @@ class Game_adapted():
                 display.flip()
                 reward -= 100;
                 j.vies = j.vies_max
+                self.reset()
             if len(brs) == 0:
                 # S'il n'y a plus de briques
                 msg7 = self.cadre.render("Vous avez gagné. Votre score:", 0, black)
@@ -282,6 +283,14 @@ class Game_adapted():
         self.chrono = time.Clock()
         global j, brs
         self.b, j, self.bs, self.js, brs = self.initialisation(self.screen)
+
+    def reset(self):
+        self.main()
+        return (j.rect.x, self.b.rect.x)
+
+    def move(self, action):
+        return self.update_frame(action)
+
 
 if __name__ == '__main__':
     Game_adapted().main()
