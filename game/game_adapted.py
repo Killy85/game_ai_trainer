@@ -152,7 +152,8 @@ class Raquette(sprite.Sprite):
 
 class Game_adapted():
 
-    def __init__(self):
+    def __init__(self, limit_fps = True):
+        self.limit_fps = limit_fps
         """ """
 
 
@@ -202,7 +203,8 @@ class Game_adapted():
         start_vie = j.vies
         #flag2 = True
         for p in range(30): # while flag2:
-            self.chrono.tick(60)
+            if self.limit_fps :
+                self.chrono.tick(60)
             # Contréler la raquette
             if(movement == 2 and p == 5):
                 # Deplacement de la barre vers la droite
@@ -283,3 +285,5 @@ class Game_adapted():
 
 if __name__ == '__main__':
     Game_adapted().main()
+
+

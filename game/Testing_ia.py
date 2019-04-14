@@ -1,7 +1,7 @@
 from game_adapted import Game_adapted
 
 if __name__ == '__main__':
-    game = Game_adapted()
+    game = Game_adapted(False)
     game.main()
 
     for p in range(10):
