@@ -84,6 +84,11 @@ class Balle(sprite.Sprite):
             elif self.rect.colliderect(j.rect):
                 self.rect.bottom = j.rect.top
                 self.angle = -self.angle
+                if(j.rect.x > self.rect.centerx):
+                    self.angle -= 0.5
+                else:
+                    self.angle += 0.5
+
                 self.has_bounced = True
             #Collision avec une brique du groupe briquesprite
             collision = sprite.spritecollide(self, brs, 1)
@@ -204,7 +209,7 @@ class Game_adapted():
         startBrs = len(brs)
         start_vie = j.vies
         #flag2 = True
-        nb_frame_to_do = 45
+        nb_frame_to_do = 30
         last_frame_6 = ''
         last_frame_3 = ''
         last_frame = ''

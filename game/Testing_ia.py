@@ -8,4 +8,5 @@ if __name__ == '__main__':
         if(p == 1):
             print(game.update_frame(2))
         else:
+            print(str(p) + " loop")
             game.update_frame(1)
