@@ -204,7 +204,11 @@ class Game_adapted():
         startBrs = len(brs)
         start_vie = j.vies
         #flag2 = True
-        for p in range(30): # while flag2:
+        nb_frame_to_do = 30
+        last_frame_6 = ''
+        last_frame_3 = ''
+        last_frame = ''
+        for p in range(nb_frame_to_do): # while flag2:
             if self.limit_fps :
                 self.chrono.tick(60)
             # Contréler la raquette
@@ -214,6 +218,12 @@ class Game_adapted():
             if(movement == 0 and p == 5):
                 # Deplacement de la barre vers la gauche
                 j.left()
+            if(p == nb_frame_to_do - 6):
+                last_frame_6 = image.tostring(self.screen, 'RGB')
+            if(p == nb_frame_to_do - 6):
+                last_frame_6 = image.tostring(self.screen, 'RGB')
+            if(p == nb_frame_to_do):
+                last_frame_6 = image.tostring(self.screen, 'RGB')
             if j.vies == 0:
                 # Si le joueur n'a plus de vies
                 msg5 = self.cadre.render("Vous avez perdu. Votre score:", 0, black)
@@ -268,11 +278,18 @@ class Game_adapted():
         self.b.is_lauched = True
         if(start_vie - j.vies): self.b.is_lauched = False
         self.b.has_bounced = False
-        # 1 : position du centre de la raquette
-        # 2 : position du centre de la balle
-        # 3 : raward
-        # 4 : wtf ?
-        return (j.rect.x, self.b.rect.x), reward+life_reward, (start_vie == 1 and j.vies == 5)
+        # 1.a : position du centre de la raquette
+        # 1.b : position du centre de la balle
+        # 2 : raward
+        # 3 : wtf ?
+        # return (j.rect.x, self.b.rect.x), reward+life_reward, (start_vie == 1 and j.vies == 5)
+
+        # 1.a : last_frame - 6
+        # 1.b : last-frame - 3
+        # 1.c : last_frame
+        # 2 : raward
+        # 3 : wtf ?
+        return (last_frame_6, last_frame_3, last_frame), reward+life_reward, (start_vie == 1 and j.vies == 5)
 
     def main(self):
         #Initialisation de l'écran
