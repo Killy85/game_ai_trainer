@@ -204,7 +204,7 @@ class Game_adapted():
         startBrs = len(brs)
         start_vie = j.vies
         #flag2 = True
-        nb_frame_to_do = 30
+        nb_frame_to_do = 45
         last_frame_6 = ''
         last_frame_3 = ''
         last_frame = ''
