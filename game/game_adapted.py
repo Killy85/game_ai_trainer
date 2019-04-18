@@ -233,12 +233,12 @@ class Game_adapted():
             if(movement == 0 and p == 5):
                 # Deplacement de la barre vers la gauche
                 j.left()
-            if(p == nb_frame_to_do - 6):
-                last_frame_6 = self.screen.copy # image.tostring(self.screen, 'RGB')
             if(p == nb_frame_to_do - 3):
-                last_frame_3 = self.screen.copy
-            if(p == nb_frame_to_do):
-                last_frame = self.screen.copy
+                last_frame_6 = surfarray.array2d(self.screen.copy()) # image.tostring(self.screen, 'RGB')
+            if(p == nb_frame_to_do - 2):
+                last_frame_3 = surfarray.array2d(self.screen.copy())
+            if(p == nb_frame_to_do -1):
+                last_frame = surfarray.array2d(self.screen.copy())
             if j.vies == 0:
                 # Si le joueur n'a plus de vies
                 msg5 = self.cadre.render("Vous avez perdu. Votre score:", 0, black)
