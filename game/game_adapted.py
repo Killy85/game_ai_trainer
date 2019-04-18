@@ -329,6 +329,9 @@ class Game_adapted():
     def move(self, action):
         return self.update_frame(action)
 
+    def render(self, limit_fps):
+        self.limit_fps = limit_fps
+
 
 if __name__ == '__main__':
     Game_adapted().main()
