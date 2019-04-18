@@ -84,10 +84,22 @@ class Balle(sprite.Sprite):
             elif self.rect.colliderect(j.rect):
                 self.rect.bottom = j.rect.top
                 self.angle = -self.angle
+
                 if(j.rect.x > self.rect.centerx):
-                    self.angle -= 0.5
+                    self.angle -= 0.3
                 else:
-                    self.angle += 0.5
+                    self.angle += 0.2
+
+                if self.angle > 2.8 :
+                    self.angle = 2.8
+                elif self.angle < 0.2 and self.angle >= 0.0:
+                    self.angle = 0.2
+                elif self.angle > -0.2:
+                    self.angle = 0.2
+                elif self.angle < -2.8:
+                    self.angle = -2.8
+
+                print(self.angle)
 
                 self.has_bounced = True
             #Collision avec une brique du groupe briquesprite
@@ -225,10 +237,10 @@ class Game_adapted():
                 j.left()
             if(p == nb_frame_to_do - 6):
                 last_frame_6 = image.tostring(self.screen, 'RGB')
-            if(p == nb_frame_to_do - 6):
-                last_frame_6 = image.tostring(self.screen, 'RGB')
+            if(p == nb_frame_to_do - 3):
+                last_frame_3 = image.tostring(self.screen, 'RGB')
             if(p == nb_frame_to_do):
-                last_frame_6 = image.tostring(self.screen, 'RGB')
+                last_frame = image.tostring(self.screen, 'RGB')
             if j.vies == 0:
                 # Si le joueur n'a plus de vies
                 msg5 = self.cadre.render("Vous avez perdu. Votre score:", 0, black)
