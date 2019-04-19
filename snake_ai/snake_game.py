@@ -9,7 +9,7 @@ def get_state(game, snake_location, food_location, alea=False):
     x, y = snake_location
     if alea:
         return [get_grille(game, x, y) for (x, y) in
-                [ssnake_location, food_location]]
+                [snake_location, food_location]]
     return flatten(get_grille(game, x, y))
 
 def get_grille(game, x, y):
@@ -36,13 +36,11 @@ nb_frames = 10000000000000000
 bestScore = 0
 
 for i in range(nb_frames):
-    if(p.score() > 0):
-        print(str(datetime.datetime.now())+str(p.score()))
+    if(p.score() > bestScore):
+        bestScore = int(p.score())
+        print('New Best Score : '+str(bestScore) + ' à ' + str(datetime.datetime.now()))
 
     if p.game_over():
-        if(p.score() > bestScore):
-            bestScore = p.score()
-            print('New Best Score : '+str(bestScore))
         p.reset_game()
 
     observation = p.getGameState()
