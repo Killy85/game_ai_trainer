@@ -11,7 +11,7 @@
 
 > Ne fonctionne que sur Linux
 
-(Guide d'installation)[https://www.tensorflow.org/install/pip]
+[Guide d'installation](https://www.tensorflow.org/install/pip)
 
 ### Installation de PLE
 
