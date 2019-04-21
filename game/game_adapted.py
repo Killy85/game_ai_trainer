@@ -219,7 +219,7 @@ class Game_adapted():
         startBrs = len(brs)
         start_vie = j.vies
         #flag2 = True
-        nb_frame_to_do = 30
+        nb_frame_to_do = 20
         last_frame_6 = ''
         last_frame_3 = ''
         last_frame = ''
@@ -233,9 +233,9 @@ class Game_adapted():
             if(movement == 0 and p == 5):
                 # Deplacement de la barre vers la gauche
                 j.left()
-            if(p == nb_frame_to_do - 3):
+            if(p == nb_frame_to_do - 7):
                 last_frame_6 = surfarray.array2d(self.screen.copy()) # image.tostring(self.screen, 'RGB')
-            if(p == nb_frame_to_do - 2):
+            if(p == nb_frame_to_do - 4):
                 last_frame_3 = surfarray.array2d(self.screen.copy())
             if(p == nb_frame_to_do -1):
                 last_frame = surfarray.array2d(self.screen.copy())
