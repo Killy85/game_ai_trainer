@@ -38,7 +38,7 @@ bestScore = 0
 for i in range(nb_frames):
     if(p.score() > bestScore):
         bestScore = int(p.score())
-        print('New Best Score : '+str(bestScore) + ' à ' + str(datetime.datetime.now()))
+        print('New Best Score : '+str(bestScore) + ' a ' + str(datetime.datetime.now()))
 
     if p.game_over():
         p.reset_game()
@@ -49,6 +49,15 @@ for i in range(nb_frames):
     state = get_state(game, snake_location, food_location)
     action = agent.pickAction(state, True)
     reward = p.act(agent.getSelectedAction(action))
+
+    # Fixing Reward by punishing more the player when he is not doing the right thing.
+    if(reward == -1): # If he loose (By touching himself or the border)
+        reward = -100
+    elif(reward == 0): # If he is not doing anything
+        reward = -1
+    elif(reward == 1): # If he get the food
+        reward = 200
+    
 
     observation = p.getGameState()
     food_location = [int(observation.get('food_x')/10), int(observation.get('food_y')/10)]
