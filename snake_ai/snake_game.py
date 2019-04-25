@@ -1,69 +1,120 @@
-from ple.games.snake import Snake
-from ple import PLE
-from agent import Trainer
-import datetime
+import sys, pygame
 
-flatten = lambda l: [item for sublist in l for item in sublist]
+class Snake:
 
-def get_state(game, snake_location, food_location, alea=False):
-    x, y = snake_location
-    if alea:
-        return [get_grille(game, x, y) for (x, y) in
-                [snake_location, food_location]]
-    return flatten(get_grille(game, x, y))
+    ACTIONS = [0, 1, 2]
 
-def get_grille(game, x, y):
-    grille = [
-        [0] * int(game.width/10) for i in range(int(game.height/10))
-    ]
-    grille[x][y] = 1
-    return grille
+    DIRECTIONS = {
+        'UP':       [0, -10],
+        'DOWN':     [0, 10],
+        'LEFT':     [-10, 0],
+        'RIGHT':    [10, 0]
+    }
+
+    CASE_SIZE = 10
+
+    '''
+        Initialisation du jeu
+    '''
+    def __init__(self, nb_cases):
+        pygame.init()
+        screen_size = nb_cases * self.CASE_SIZE
+        size = width, height = screen_size, screen_size
+        self.white = 255, 255, 255
+        self.screen = pygame.display.set_mode(size)
+        self.score = 0
+
+        self.players = []
+        add_player_body()
+        player = self.players[0]
+        player['player_rect'].move_ip(player['actual_position'])
+        self.screen.fill(self.white)
+        self.screen.blit(self.player, self.player_rect)
+
+        pygame.display.flip()
 
 
-# NE PAS CHANGER CETTE VARIABLE
-case_size = 20
-size = 10
+    '''
+        Déplace la tête et le reste du corps en fonction de l'action du joueur
+    '''
+    def do_move(self, action):
+        new_position = [0,0]
+        reward = 0
 
-# Initialisation du jeu
-game = Snake(height=case_size*size,width=case_size*size)
-p = PLE(game, fps=30, display_screen=True)
+        '''
+            Déplacement des body en fonction du body "parent"
+        '''
+        for i in range(self.players.len() - 1, 0):
+            body = self.players[i]
+            self.screen.fill(self.white)
+            self.screen.blit(body['player_image'], body['player_rect'])
 
-agent = Trainer(allowed_actions=p.getActionSet(), height=game.height, width=game.width)
+        '''
+            Déplacemement du player en fonction de l'action, de sa position et de sa direction
+        '''
+        player = self.players[0]
+        direction = player['actual_direction']
+        if(action == self.ACTIONS.LEFT):
+            
+            if(direction == 'UP')
+                player['actual_direction'] = 'LEFT'
+            elif(direction == 'LEFT'):
+                player['actual_direction'] = 'DOWN'
+            elif(direction == 'DOWN'):
+                player['actual_direction'] = 'RIGHT'
+            elif(direction == 'RIGHT'):
+                player['actual_direction'] = 'UP'
 
-p.init()
-reward = 0.0
-nb_frames = 10000000000000000
-bestScore = 0
+        elif(action == self.ACTIONS.RIGHT):
+            
+            if(direction == 'UP')
+                player['actual_direction'] = 'RIGHT'
+            elif(direction == 'LEFT'):
+                player['actual_direction'] = 'UP'
+            elif(direction == 'DOWN'):
+                player['actual_direction'] = 'LEFT'
+            elif(direction == 'RIGHT'):
+                player['actual_direction'] = 'DOWN'
 
-for i in range(nb_frames):
-    if(p.score() > bestScore):
-        bestScore = int(p.score())
-        print('New Best Score : '+str(bestScore) + ' a ' + str(datetime.datetime.now()))
 
-    if p.game_over():
-        p.reset_game()
+        player['actual_position'] = player['actual_position'] + DIRECTIONS[player['actual_direction']]
+        player['player_rect'].move_ip(player['actual_position'])
+        self.screen.fill(self.white)
+        self.screen.blit(body['player_image'], body['player_rect'])
 
-    observation = p.getGameState()
-    food_location = [int(observation.get('food_x')/10), int(observation.get('food_y')/10)]
-    snake_location = [int(observation.get('snake_head_x')/10), int(observation.get('snake_head_y')/10)]
-    state = get_state(game, snake_location, food_location)
-    action = agent.pickAction(state, True)
-    reward = p.act(agent.getSelectedAction(action))
+        pygame.display.flip()
 
-    # Fixing Reward by punishing more the player when he is not doing the right thing.
-    if(reward == -1): # If he loose (By touching himself or the border)
-        reward = -100
-    elif(reward == 0): # If he is not doing anything
-        reward = -1
-    elif(reward == 1): # If he get the food
-        reward = 200
-    
+        reward = get_reward()
 
-    observation = p.getGameState()
-    food_location = [int(observation.get('food_x')/10), int(observation.get('food_y')/10)]
-    snake_location = [int(observation.get('snake_head_x')/10), int(observation.get('snake_head_y')/10)]
-    next_state = get_state(game, snake_location, food_location)
+        return {state:player['actual_position'], reward: reward}
 
-    agent.train(state, action, reward, next_state, False)
+    def score():
+        return self.score
 
-print('Best Score : '+str(bestScore))
+    def add_player_body(self):
+        nb_players = self.players.len()
+        body_architecture = {
+            'actual_position': [0,0],
+            'actual_direction': 'LEFT',
+            'player_image': pygame.image.load("img/player_case.gif"),
+            'player_rect': body_architecture['player_image'].get_rect()
+        }
+        if(nb_players > 0):
+            last_body = self.players[nb_players - 1]
+            free = get_body_free_space(nb_players - 1)
+            if(free > 1):
+        else:
+            body_architecture['actual_position'] = [screen_size/2, screen_size/2]
+
+        self.players.append(body_architecture)
+
+
+    def get_body_free_space(self, body_index):
+        free = self.ACTIONS
+        for i in range(self.players.len()):
+            if(i != body_index ):
+                print('poof')
+        return free
+
+    def get_reward(self):
+        return 0
