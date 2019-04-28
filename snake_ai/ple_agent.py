@@ -14,7 +14,7 @@ class Trainer:
     def __init__(self, allowed_actions, height, width, name=None, learning_rate=0.01, epsilon_decay=0.9999):
         self.action_size = len(allowed_actions)
         self.actions = allowed_actions
-        self.state_size = height * width
+        self.state_size = 400
         self.gamma = 0.9
         self.epsilon = 1.0
         self.epsilon_min = 0.01

@@ -1,7 +1,8 @@
 from ple.games.snake import Snake
 from ple import PLE
-from agent import Trainer
+from ple_agent import Trainer
 import datetime
+import sys
 
 flatten = lambda l: [item for sublist in l for item in sublist]
 
@@ -16,6 +17,11 @@ def get_grille(game, x, y):
     grille = [
         [0] * int(game.width/10) for i in range(int(game.height/10))
     ]
+    print('Coord  : ' + str(x) + ',' + str(y))
+    if y > 18 or y < 1:
+        sys.exit()
+    if x > 18 or x < 1:
+        sys.exit()
     grille[x][y] = 1
     return grille
 
