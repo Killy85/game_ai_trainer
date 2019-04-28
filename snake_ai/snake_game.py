@@ -36,15 +36,22 @@ class Snake:
 
         self.screen.fill(self.white)
 
+
         '''
             Déplacement des body en fonction du body "parent"
         '''
-        for i in range(1, len(self.players)):
-            body = self.players[len(self.players)-i]
-            
+        nb_players = len(self.players)
+        for i in range(1, nb_players):
+            body = self.players[nb_players - i]
+            body_parent = self.players[nb_players - i - 1]
+            bp_pos = body_parent['actual_position']
+            body= self.new_body(bp_pos[0], bp_pos[1], body_parent['actual_direction'])
+
+            self.players[len(self.players)-i] = body
+
             body_player = pygame.image.load("img/player_case.gif")
             body_rect = body_player.get_rect()
-            body_rect.move_ip(body['actual_position'])
+            body_rect.move_ip(body_parent['actual_position'])
             self.screen.blit(body_player, body_rect)
 
         '''
@@ -77,6 +84,7 @@ class Snake:
         player['actual_position'][0] += self.DIRECTIONS[player['actual_direction']][0]
         player['actual_position'][1] += self.DIRECTIONS[player['actual_direction']][1]
 
+
         self.players[0] = player
 
         player_image = pygame.image.load("img/player_case.gif")
@@ -92,14 +100,12 @@ class Snake:
             self.add_player_body()
             self.food = self.get_food_position()
 
-            print(body_architecture)
-
         self.show_food()
 
         if(self.display):
             pygame.display.flip()
 
-        return {'snake_location': player['actual_position'], 'food_location': self.food, 'reward': reward}
+        return self.get_observation()
 
     def show_food(self):
         food_image = pygame.image.load("img/food_case.gif")
@@ -107,16 +113,18 @@ class Snake:
         food_rect.move_ip(self.food)
         self.screen.blit(food_image, food_rect)
 
-
     def get_score(self):
         return self.score
 
+    def new_body(self, x=0, y=0, direction='LEFT'): 
+        return {
+            'actual_position': [x,y],
+            'actual_direction': direction
+        }
+
     def add_player_body(self):
         nb_players = len(self.players)
-        body_architecture = {
-            'actual_position': [0,0],
-            'actual_direction': 'LEFT'
-        }
+        body_architecture = self.new_body()
 
         if(nb_players > 0):
             last_body = self.players[nb_players - 1]
@@ -131,8 +139,7 @@ class Snake:
     def get_food_position(self):
         x = int(random.randrange(0, self.screen_size, self.CASE_SIZE))
         y = int(random.randrange(0, self.screen_size, self.CASE_SIZE))
-        x = 60
-        y = 100
+
         return [x,y]
 
     def get_body_free_space(self, body_index):
@@ -165,21 +172,21 @@ class Snake:
 
     def get_reward(self):
         player = self.players[0]
-        reward = 0
+        reward = -1
 
         pos = player['actual_position']
         if(pos[0] == self.food[0] and pos[1] == self.food[1]):
             # Check if player touch food
-            reward = 1
+            reward = 100
         elif(pos[0] < 0 or pos[0] >= self.screen_size or pos[1] < 0 or pos[1] >= self.screen_size):
             # Check if player is on the border
-            reward = -1
+            reward = -100
         else:
             # Check if player touch hiself
             for i in range(len(self.players)):
                 pos_body = self.players[i]['actual_position']
                 if(i != 0 and (pos_body[0] == pos[0] and pos_body[1] == pos[1])):
-                    reward = -1
+                    reward = -100
                     break
 
         return reward
@@ -212,3 +219,17 @@ class Snake:
             in_game_screen = False
 
         return in_game_screen
+
+    def get_actions_set(self):
+        return self.ACTIONS
+
+    def get_observation(self):
+        player = self.players[0]['actual_position']
+        p_x = int(player[0]/self.CASE_SIZE) + 1
+        p_y = int(player[1]/self.CASE_SIZE) + 1
+
+        food = self.food
+        f_x = int(food[0]/self.CASE_SIZE) + 1
+        f_y = int(food[1]/self.CASE_SIZE) + 1
+
+        return {'snake_location': [p_x, p_y], 'food_location': [f_x, f_y], 'reward': self.get_reward()}
