@@ -7,24 +7,17 @@ import sys
 flatten = lambda l: [item for sublist in l for item in sublist]
 
 def get_state(game, snake_location, food_location, alea=False):
-    x, y = snake_location
-    if alea:
-        return [get_grille(game, x, y) for (x, y) in
-                [snake_location, food_location]]
-    return flatten(get_grille(game, x, y))
+    return flatten(get_grille(game, snake_location, food_location))
 
-def get_grille(game, x, y):
+def get_grille(game, snake_location, food_location):
+    s_x, s_y = snake_location
+    f_x, f_x = food_location
     grille = [
         [0] * int(game.width/10) for i in range(int(game.height/10))
     ]
-    print('Coord  : ' + str(x) + ',' + str(y))
-    if y > 18 or y < 1:
-        sys.exit()
-    if x > 18 or x < 1:
-        sys.exit()
-    grille[x][y] = 1
+    grille[s_x][s_y] += 1
+    grille[f_x][f_x] += 1
     return grille
-
 
 # NE PAS CHANGER CETTE VARIABLE
 case_size = 20
