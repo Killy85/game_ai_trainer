@@ -24,9 +24,9 @@ class Snake:
         size = width, height = self.screen_size, self.screen_size
         self.white = 255, 255, 255
         self.screen = pygame.display.set_mode(size)
-        
         self.reset()
 
+        pygame.display.set_caption('Snake - Score : ' + str(self.get_score()))
     '''
         Déplace la tête et le reste du corps en fonction de l'action du joueur
     '''
@@ -105,6 +105,8 @@ class Snake:
         if(self.display):
             pygame.display.flip()
 
+        pygame.display.set_caption('Snake - Score : ' + str(self.get_score()))
+
         return self.get_observation()
 
     def show_food(self):
@@ -177,10 +179,10 @@ class Snake:
         pos = player['actual_position']
         if(pos[0] == self.food[0] and pos[1] == self.food[1]):
             # Check if player touch food
-            reward = 100
+            reward = 10
         elif(pos[0] < 0 or pos[0] >= self.screen_size or pos[1] < 0 or pos[1] >= self.screen_size):
             # Check if player is on the border
-            reward = -100
+            reward = -20
         else:
             # Check if player touch hiself
             for i in range(len(self.players)):
