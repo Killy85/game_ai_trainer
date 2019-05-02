@@ -244,7 +244,7 @@ def train(env_chosen):
         # this is one of DeepMind's idea.
         # just do nothing at the start of episode to avoid sub-optimal
         for _ in range(random.randint(1, FLAGS.no_op_steps)):
-            observe, _, _= env.move(1)
+            observe, _, _, _ = env.step(1)
         # At start of episode, there is no preceding frame
         # So just copy initial states to make history
         state = pre_processing(observe)
@@ -263,7 +263,7 @@ def train(env_chosen):
             if epsilon > FLAGS.final_epsilon and global_step > FLAGS.observe_step_num:
                 epsilon -= epsilon_decay
 
-            observe, reward, done = env.move(action)
+            observe, reward, done, _ = env.step(action)
             # pre-process the observation --> history
             next_state = pre_processing(observe)
             next_state = np.reshape([next_state], (1, 84, 84, 1))
@@ -361,7 +361,7 @@ def test(env_chosen):
         score, start_life = 0, 5
         observe = env.reset()
 
-        observe, _, _ = env.move(1)
+        observe, _, _, _ = env.step(1)
         # At start of episode, there is no preceding frame
         # So just copy initial states to make history
         state = pre_processing(observe)
@@ -375,7 +375,7 @@ def test(env_chosen):
             # change action to real_action
             real_action = action + 1
 
-            observe, reward, done = env.move(real_action)
+            observe, reward, done, _ = env.step(real_action)
             # pre-process the observation --> history
             next_state = pre_processing(observe)
             next_state = np.reshape([next_state], (1, 84, 84, 1))

@@ -299,7 +299,7 @@ class Game_adapted():
         # 1.c : last_frame
         # 2 : raward
         # 3 : wtf ?
-        return last_frame, reward, (start_vie == 1 and j.vies == 5)
+        return last_frame, reward, (start_vie == 1 and j.vies == 5), []
 
     def main(self):
         #Initialisation de l'écran
@@ -321,7 +321,7 @@ class Game_adapted():
         self.main()
         return (j.rect.x, self.b.rect.x)
 
-    def move(self, action):
+    def step(self, action):
         return self.update_frame(action)
 
     def render(self, limit_fps):
