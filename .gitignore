@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.vscode
+
+tf_train_breakout/
 
 # C extensions
 *.so

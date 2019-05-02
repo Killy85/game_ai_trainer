@@ -23,6 +23,7 @@ green = (0, 255, 0)
 blue = (0, 0, 255)
 white = (255, 255, 255)
 
+
 #Fonction pour charger les images
 def load_image(name, colorkey=None):
     fullname = os.path.join(os.getcwd(), 'images', name)
@@ -56,8 +57,8 @@ class Balle(sprite.Sprite):
 
     def reinit(self):
         self.rect.centerx = self.area.centerx
-        self.rect.centery = 500
-        self.angle = random() * 2.74 + 0.2 # pi/3.3
+        self.rect.centery = 480
+        self.angle = -1*(random() * 2.74 + 0.2) # pi/3.3
         self.flag = 1
 
     def update(self):
@@ -185,7 +186,7 @@ class Game_adapted():
                 y = y + 16
                 if y == 200:
                     y = 40
-                    x = x + 46
+                    x = x + 1
         if niv == 2:
             x, y = 7, 40
             while x < 470:
@@ -194,7 +195,7 @@ class Game_adapted():
                 y = y + 16
                 if y == 200:
                     y = 40
-                    x = x + 92
+                    x = x + 46
         return briques
 
     def initialisation(self, screen):
@@ -219,24 +220,18 @@ class Game_adapted():
         startBrs = len(brs)
         start_vie = j.vies
         #flag2 = True
-        nb_frame_to_do = 30
-        last_frame_6 = ''
-        last_frame_3 = ''
+        nb_frame_to_do = 5
         last_frame = ''
         for p in range(nb_frame_to_do): # while flag2:
             if self.limit_fps :
                 self.chrono.tick(60)
             # Contréler la raquette
-            if(movement == 2 and p == 5):
+            if(movement == 2 and p == 1):
                 # Deplacement de la barre vers la droite
                 j.right()
-            if(movement == 0 and p == 5):
+            if(movement == 0 and p == 1):
                 # Deplacement de la barre vers la gauche
                 j.left()
-            if(p == nb_frame_to_do - 3):
-                last_frame_6 = surfarray.array2d(self.screen.copy()) # image.tostring(self.screen, 'RGB')
-            if(p == nb_frame_to_do - 2):
-                last_frame_3 = surfarray.array2d(self.screen.copy())
             if(p == nb_frame_to_do -1):
                 last_frame = surfarray.array2d(self.screen.copy())
             if j.vies == 0:
@@ -253,7 +248,6 @@ class Game_adapted():
                 self.screen.blit(msg5, pos_msg5)
                 self.screen.blit(msg6, pos_msg6)
                 display.flip()
-                reward -= 100;
                 j.vies = j.vies_max
                 self.reset()
             if len(brs) == 0:
@@ -277,7 +271,7 @@ class Game_adapted():
                             flag5 = False
                             flag2 = False
             if(self.b.has_bounced and self.b.is_lauched):
-                reward += 5
+                reward += 10
                 self.b.has_bounced = False
             # Rafraichissement de l'écran pendant le jeu
             self.screen.fill(white)
@@ -288,8 +282,9 @@ class Game_adapted():
             brs.draw(self.screen)
             display.flip()
 
-        brick_reward = startBrs - len(brs) * 5
-        life_reward = ((start_vie - j.vies) * -100)
+
+        brick_reward = ((startBrs - len(brs)) if (startBrs - len(brs)) > 0 else 0 )* 5
+        life_reward = 0 #((start_vie - j.vies) * -1)
         self.b.is_lauched = True
         if(start_vie - j.vies): self.b.is_lauched = False
         self.b.has_bounced = False
@@ -304,7 +299,7 @@ class Game_adapted():
         # 1.c : last_frame
         # 2 : raward
         # 3 : wtf ?
-        return (last_frame_6, last_frame_3, last_frame), reward+life_reward, (start_vie == 1 and j.vies == 5)
+        return last_frame, reward, (start_vie == 1 and j.vies == 5)
 
     def main(self):
         #Initialisation de l'écran

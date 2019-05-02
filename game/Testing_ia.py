@@ -6,7 +6,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
-    game = Game_adapted(False)
+    game = Game_adapted()
     game.main()
 
     for p in range(2000):
@@ -15,7 +15,6 @@ if __name__ == '__main__':
         else:
             print(str(p) + " loop")
             images, reward, boolean = game.update_frame(1)
-            for i in range(0,3):
-                processed_observe = resize(rgb2gray(images[i]), (84, 84), mode='constant')
-                plt.imshow(processed_observe)
-                plt.show()
+            processed_observe = resize(rgb2gray(images), (84, 84), mode='constant')
+            plt.imshow(processed_observe)
+            plt.show()
