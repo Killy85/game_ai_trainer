@@ -14,7 +14,7 @@ if __name__ == '__main__':
             print(game.update_frame(2))
         else:
             print(str(p) + " loop")
-            images, reward, boolean = game.update_frame(1)
+            images, reward, boolean, _ = game.update_frame(1)
             processed_observe = resize(rgb2gray(images), (84, 84), mode='constant')
             plt.imshow(processed_observe)
             plt.show()
