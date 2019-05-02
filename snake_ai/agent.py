@@ -20,6 +20,7 @@ class Trainer:
         self.epsilon_min = 0.01
         self.epsilon_decay = epsilon_decay
         self.learning_rate = learning_rate
+        self.name = name
 
         if name is not None and os.path.isfile("model-" + name):
             model = load_model("model-" + name)

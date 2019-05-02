@@ -25,7 +25,7 @@ display = True
 snake = Snake(nb_cases, display)
 
 grid_size = nb_cases + 2
-agent = Trainer(allowed_actions=snake.get_actions_set(), height=grid_size, width=grid_size)
+agent = Trainer(allowed_actions=snake.get_actions_set(), name='SnakeV1', height=grid_size, width=grid_size)
 
 reward = 0
 bestScore = 0
@@ -39,6 +39,7 @@ while 1:
     if(score > bestScore):
         bestScore = score
         print('New Best Score : '+str(bestScore) + ' a ' + str(datetime.datetime.now()))
+        agent.save()
 
     if(reward < -1):
         snake.reset()
