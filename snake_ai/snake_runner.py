@@ -5,15 +5,15 @@ import time
 
 flatten = lambda l: [item for sublist in l for item in sublist]
 
-def get_state(grid_size, snake_location, state_control, alea=False):
+def get_state(grid_size, snake_location, state, alea=False):
     state = [snake_location[0], snake_location[1]]
-    for key, value in state_control.items():
+    for key, value in enumerate(state_control):
         state.append(value)
 
     return state
 
 
-nb_cases = 20
+nb_cases = 10
 display = True
 
 # Initialisation du jeu

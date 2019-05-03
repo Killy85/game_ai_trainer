@@ -156,20 +156,21 @@ class Snake:
         # On contrôle d'abord les bordures
         if(self.control_border(up)):
             free['UP'] = up
-        elif(self.control_border(left)):
+        if(self.control_border(left)):
             free['LEFT'] = left
-        elif(self.control_border(down)):
+        if(self.control_border(down)):
             free['DOWN'] = down
-        elif(self.control_border(right)):
+        if(self.control_border(right)):
             free['RIGHT'] = right
 
         for i in range(len(self.players)):
             pos = self.players[i]['actual_position']
             if(i != body_index):
-                for key in free:
+                for key in list(free):
                     coord = free[key]
                     if(coord[0] == pos[0] and coord[1] == pos[1]):
                         del free[key]
+
         return free
 
     def get_reward(self):
@@ -254,7 +255,7 @@ class Snake:
         player = self.players[0]
         direction = player['actual_direction']
         pos = player['actual_position']
-        state_control = {}
+        
         pos_x = pos[0]
         pos_y = pos[1]
         if(direction == 'UP'):
@@ -274,13 +275,13 @@ class Snake:
             right = [pos_x + 1, pos_y]
             left = [pos_x - 1, pos_y]
 
-
-        state_control['DANGER_FRONT'] = self.check_danger(front)
-        state_control['DANGER_RIGHT'] = self.check_danger(right)
-        state_control['DANGER_LEFT'] = self.check_danger(left)
-        state_control['FOOD_FRONT'] = self.check_food(front)
-        state_control['FOOD_RIGHT'] = self.check_food(right)
-        state_control['FOOD_LEFT'] = self.check_food(left)
+        state_control = [False] * 6
+        state_control[0] = self.check_danger(front)
+        state_control[1] = self.check_danger(right)
+        state_control[2] = self.check_danger(left)
+        state_control[3] = self.check_food(front)
+        state_control[4] = self.check_food(right)
+        state_control[5] = self.check_food(left)
 
         p_x = int(pos_x/self.CASE_SIZE) + 1
         p_y = int(pos_y/self.CASE_SIZE) + 1
