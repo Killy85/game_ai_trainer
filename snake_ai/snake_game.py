@@ -179,16 +179,16 @@ class Snake:
         pos = player['actual_position']
         if(pos[0] == self.food[0] and pos[1] == self.food[1]):
             # Check if player touch food
-            reward = 10
+            reward = 50
         elif(pos[0] < 0 or pos[0] >= self.screen_size or pos[1] < 0 or pos[1] >= self.screen_size):
             # Check if player is on the border
-            reward = -20
+            reward = -100
         else:
             # Check if player touch hiself
             for i in range(len(self.players)):
                 pos_body = self.players[i]['actual_position']
                 if(i != 0 and (pos_body[0] == pos[0] and pos_body[1] == pos[1])):
-                    reward = -100
+                    reward = -20
                     break
 
         return reward
