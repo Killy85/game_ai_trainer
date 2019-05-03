@@ -1,5 +1,7 @@
-import sys, pygame
+import sys
+import pygame
 import random
+
 
 class Snake:
 
@@ -17,6 +19,7 @@ class Snake:
     '''
         Initialisation du jeu
     '''
+
     def __init__(self, nb_cases, display=True):
         pygame.init()
         self.display = display
@@ -30,12 +33,12 @@ class Snake:
     '''
         Déplace la tête et le reste du corps en fonction de l'action du joueur
     '''
+
     def do_move(self, action):
-        new_position = [0,0]
+        new_position = [0, 0]
         reward = 0
 
         self.screen.fill(self.white)
-
 
         '''
             Déplacement des body en fonction du body "parent"
@@ -45,7 +48,7 @@ class Snake:
             body = self.players[nb_players - i]
             body_parent = self.players[nb_players - i - 1]
             bp_pos = body_parent['actual_position']
-            body= self.new_body(bp_pos[0], bp_pos[1], body_parent['actual_direction'])
+            body = self.new_body(bp_pos[0], bp_pos[1], body_parent['actual_direction'])
 
             self.players[len(self.players)-i] = body
 
@@ -60,7 +63,7 @@ class Snake:
         player = self.players[0]
         direction = player['actual_direction']
         if(action == self.ACTIONS[1]):
-            
+
             if(direction == 'UP'):
                 player['actual_direction'] = 'LEFT'
             elif(direction == 'LEFT'):
@@ -71,7 +74,7 @@ class Snake:
                 player['actual_direction'] = 'UP'
 
         elif(action == self.ACTIONS[2]):
-            
+
             if(direction == 'UP'):
                 player['actual_direction'] = 'RIGHT'
             elif(direction == 'LEFT'):
@@ -83,7 +86,6 @@ class Snake:
 
         player['actual_position'][0] += self.DIRECTIONS[player['actual_direction']][0]
         player['actual_position'][1] += self.DIRECTIONS[player['actual_direction']][1]
-
 
         self.players[0] = player
 
@@ -118,9 +120,9 @@ class Snake:
     def get_score(self):
         return self.score
 
-    def new_body(self, x=0, y=0, direction='LEFT'): 
+    def new_body(self, x=0, y=0, direction='LEFT'):
         return {
-            'actual_position': [x,y],
+            'actual_position': [x, y],
             'actual_direction': direction
         }
 
@@ -134,7 +136,8 @@ class Snake:
             key, value = random.choice(list(free.items()))
             body_architecture['actual_position'] = value
         else:
-            body_architecture['actual_position'] = [int(self.screen_size/2), int(self.screen_size/2)]
+            body_architecture['actual_position'] = [
+                int(self.screen_size/2), int(self.screen_size/2)]
 
         self.players.append(body_architecture)
 
@@ -142,13 +145,13 @@ class Snake:
         x = int(random.randrange(0, self.screen_size, self.CASE_SIZE))
         y = int(random.randrange(0, self.screen_size, self.CASE_SIZE))
 
-        return [x,y]
+        return [x, y]
 
     def get_body_free_space(self, body_index):
         pos = self.players[body_index]['actual_position']
-        up    = [pos[0]                             , pos[1] + self.DIRECTIONS['UP'][1]]
-        left  = [pos[0] + self.DIRECTIONS['LEFT'][0], pos[1]]
-        down  = [pos[0]                             , pos[1] + self.DIRECTIONS['DOWN'][1]]
+        up = [pos[0], pos[1] + self.DIRECTIONS['UP'][1]]
+        left = [pos[0] + self.DIRECTIONS['LEFT'][0], pos[1]]
+        down = [pos[0], pos[1] + self.DIRECTIONS['DOWN'][1]]
         right = [pos[0] + self.DIRECTIONS['RIGHT'][0], pos[1]]
 
         free = {}
@@ -180,7 +183,7 @@ class Snake:
         pos = player['actual_position']
         if(pos[0] == self.food[0] and pos[1] == self.food[1]):
             # Check if player touch food
-            reward = 50
+            reward = 20
         elif(pos[0] < 0 or pos[0] >= self.screen_size or pos[1] < 0 or pos[1] >= self.screen_size):
             # Check if player is on the border
             reward = -100
@@ -227,17 +230,23 @@ class Snake:
 
         return in_game_screen
 
-    def check_food(self, pos):
-        in_player_border = False
+    def check_food(self, pos, direction, zone):
+        in_player_zone = False
         food = self.food
-        if(pos[0] == food[0] and pos[1] == food[1]):
-            in_player_border = True
+        if(direction == 'UP' and ((zone == 'FRONT' and food[1] < pos[1]) or (zone == 'LEFT' and food[0] < pos[0]) or (zone == 'RIGHT' and food[0] > pos[0]))):
+            in_player_zone = True
+        elif(direction == 'LEFT' and ((zone == 'FRONT' and food[0] < pos[0]) or (zone == 'LEFT' and food[1] > pos[1]) or (zone == 'RIGHT' and food[1] < pos[1]))):
+            in_player_zone = True
+        elif(direction == 'DOWN' and ((zone == 'FRONT' and food[1] > pos[1]) or (zone == 'LEFT' and food[0] > pos[0]) or (zone == 'RIGHT' and food[0] < pos[0]))):
+            in_player_zone = True
+        elif(direction == 'RIGHT' and ((zone == 'FRONT' and food[0] > pos[0]) or (zone == 'LEFT' and food[1] < pos[1]) or (zone == 'RIGHT' and food[1] > pos[1]))):
+            in_player_zone = True
 
-        return in_player_border
+        return in_player_zone
 
     def check_danger(self, pos):
         in_player_border = False
-        if(pos[0] == 0 or pos[1] == 0 or pos[0] == self.screen_size or pos[1]==self.screen_size):
+        if(pos[0] == 0 or pos[1] == 0 or pos[0] == self.screen_size or pos[1] == self.screen_size):
             in_player_border = True
 
         for key, body in enumerate(self.players):
@@ -255,7 +264,7 @@ class Snake:
         player = self.players[0]
         direction = player['actual_direction']
         pos = player['actual_position']
-        
+
         pos_x = pos[0]
         pos_y = pos[1]
         if(direction == 'UP'):
@@ -279,15 +288,15 @@ class Snake:
         state_control[0] = self.check_danger(front)
         state_control[1] = self.check_danger(right)
         state_control[2] = self.check_danger(left)
-        state_control[3] = self.check_food(front)
-        state_control[4] = self.check_food(right)
-        state_control[5] = self.check_food(left)
+        state_control[3] = self.check_food(pos, direction, 'FRONT')
+        state_control[4] = self.check_food(pos, direction, 'RIGHT')
+        state_control[5] = self.check_food(pos, direction, 'LEFT')
 
+
+        #print(str(pos)+ ' ' + str(direction) + ' '+str(self.food)+ ' ' +str({'F_FRONT':state_control[3],'F_RIGHT':state_control[4],'F_LEFT':state_control[5]}))
+        
+        #print(state_control)
         p_x = int(pos_x/self.CASE_SIZE) + 1
         p_y = int(pos_y/self.CASE_SIZE) + 1
-
-        food = self.food
-        f_x = int(food[0]/self.CASE_SIZE) + 1
-        f_y = int(food[1]/self.CASE_SIZE) + 1
 
         return {'snake_location': [p_x, p_y], 'state_control': state_control, 'reward': self.get_reward()}
