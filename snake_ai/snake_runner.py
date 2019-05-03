@@ -6,29 +6,30 @@ import time
 flatten = lambda l: [item for sublist in l for item in sublist]
 
 def get_state(grid_size, snake_location, state, alea=False):
-    state = [snake_location[0], snake_location[1]]
+    state = []
     for key, value in enumerate(state_control):
         state.append(value)
 
     return state
 
 
-nb_cases = 10
+nb_cases = 20
 display = True
 
 # Initialisation du jeu
 snake = Snake(nb_cases, display)
 
 grid_size = nb_cases + 2
-agent = Trainer(allowed_actions=snake.get_actions_set(), name='SnakeV1', state_size=8)
+agent = Trainer(allowed_actions=snake.get_actions_set(), name='SnakeV1', state_size=6)
 
 reward = 0
 bestScore = 0
 iteration = 0
+lastTotalReward = 0
 
 while 1:
-    # Définition de l'action à 30 Action Par secondes
-    time.sleep(0.033)
+    # 30 FPS
+    #time.sleep(0.033)
     score = int(snake.get_score())
 
     if(score > bestScore):
@@ -37,6 +38,8 @@ while 1:
         agent.save()
 
     if(reward < -1):
+        #print('Total reward : ' + str(lastTotalReward))
+        lastTotalReward = 0
         snake.reset()
 
     iteration += 1
@@ -50,11 +53,12 @@ while 1:
 
     new_observation = snake.do_move(agent.getSelectedAction(action))
     reward = new_observation['reward']
+    lastTotalReward += reward
 
     new_state_control = new_observation['state_control']
     new_snake_location = new_observation['snake_location']
     next_state = get_state(grid_size, new_snake_location, new_state_control)
 
-    agent.train(state, action, reward, next_state, False)
+    agent.train(state, action, reward, next_state, True)
 
 print('Best Score : '+str(bestScore))
