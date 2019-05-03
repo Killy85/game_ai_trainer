@@ -261,42 +261,26 @@ class Snake:
             front = [pos_x - 1, pos_y]
             right = [pos_x, pos_y + 1]
             left = [pos_x, pos_y - 1]
-            state_control['DANGER_FRONT'] = self.check_danger(pos)
-            state_control['DANGER_RIGHT'] = self.check_danger(pos)
-            state_control['DANGER_LEFT'] = self.check_danger(pos)
-            state_control['FOOD_FRONT'] = self.check_food(pos)
-            state_control['FOOD_RIGHT'] = self.check_food(pos)
-            state_control['FOOD_LEFT'] = self.check_food(pos)
         elif(direction == 'LEFT'):
             front = [pos_x, pos_y - 1]
             right = [pos_x - 1, pos_y]
             left = [pos_x + 1, pos_y]
-            state_control['DANGER_FRONT'] = self.check_danger(pos)
-            state_control['DANGER_RIGHT'] = self.check_danger(pos)
-            state_control['DANGER_LEFT'] = self.check_danger(pos)
-            state_control['FOOD_FRONT'] = self.check_food(pos)
-            state_control['FOOD_RIGHT'] = self.check_food(pos)
-            state_control['FOOD_LEFT'] = self.check_food(pos)
         elif(direction == 'DOWN'):
             front = [pos_x + 1, pos_y]
             right = [pos_x, pos_y - 1]
             left = [pos_x, pos_y + 1]
-            state_control['DANGER_FRONT'] = self.check_danger(pos)
-            state_control['DANGER_RIGHT'] = self.check_danger(pos)
-            state_control['DANGER_LEFT'] = self.check_danger(pos)
-            state_control['FOOD_FRONT'] = self.check_food(pos)
-            state_control['FOOD_RIGHT'] = self.check_food(pos)
-            state_control['FOOD_LEFT'] = self.check_food(pos)
         elif(direction == 'RIGHT'):
             front = [pos_x, pos_y + 1]
             right = [pos_x + 1, pos_y]
             left = [pos_x - 1, pos_y]
-            state_control['DANGER_FRONT'] = self.check_danger(pos)
-            state_control['DANGER_RIGHT'] = self.check_danger(pos)
-            state_control['DANGER_LEFT'] = self.check_danger(pos)
-            state_control['FOOD_FRONT'] = self.check_food(pos)
-            state_control['FOOD_RIGHT'] = self.check_food(pos)
-            state_control['FOOD_LEFT'] = self.check_food(pos)
+
+
+        state_control['DANGER_FRONT'] = self.check_danger(front)
+        state_control['DANGER_RIGHT'] = self.check_danger(right)
+        state_control['DANGER_LEFT'] = self.check_danger(left)
+        state_control['FOOD_FRONT'] = self.check_food(front)
+        state_control['FOOD_RIGHT'] = self.check_food(right)
+        state_control['FOOD_LEFT'] = self.check_food(left)
 
         p_x = int(pos_x/self.CASE_SIZE) + 1
         p_y = int(pos_y/self.CASE_SIZE) + 1
