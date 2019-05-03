@@ -5,18 +5,13 @@ import time
 
 flatten = lambda l: [item for sublist in l for item in sublist]
 
-def get_state(grid_size, snake_location, food_location, alea=False):
-    return flatten(get_grille(grid_size, snake_location, food_location))
+def get_state(grid_size, snake_location, state_control, alea=False):
+    state = [snake_location[0], snake_location[1]]
+    for key, value in state_control.items():
+        state.append(value)
 
-def get_grille(grid_size, snake_location, food_location):
-    s_x, s_y = snake_location
-    f_x, f_x = food_location
-    grille = [
-        [0] * int(grid_size) for i in range(int(grid_size))
-    ]
-    grille[s_x][s_y] += 1
-    grille[f_x][f_x] += 1
-    return grille
+    return state
+
 
 nb_cases = 20
 display = True
@@ -25,7 +20,7 @@ display = True
 snake = Snake(nb_cases, display)
 
 grid_size = nb_cases + 2
-agent = Trainer(allowed_actions=snake.get_actions_set(), name='SnakeV1', height=grid_size, width=grid_size)
+agent = Trainer(allowed_actions=snake.get_actions_set(), name='SnakeV1', state_size=8)
 
 reward = 0
 bestScore = 0
@@ -47,18 +42,18 @@ while 1:
     iteration += 1
 
     observation = snake.get_observation()
-    food_location = observation['food_location']
+    state_control = observation['state_control']
     snake_location = observation['snake_location']
-    state = get_state(grid_size, snake_location, food_location)
+    state = get_state(grid_size, snake_location, state_control)
 
     action = agent.pickAction(state, True)
 
     new_observation = snake.do_move(agent.getSelectedAction(action))
     reward = new_observation['reward']
 
-    new_food_location = new_observation['food_location']
+    new_state_control = new_observation['state_control']
     new_snake_location = new_observation['snake_location']
-    next_state = get_state(grid_size, new_snake_location, new_food_location)
+    next_state = get_state(grid_size, new_snake_location, new_state_control)
 
     agent.train(state, action, reward, next_state, False)
 

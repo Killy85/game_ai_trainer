@@ -217,21 +217,92 @@ class Snake:
 
     def control_border(self, pos):
         in_game_screen = True
+
         if(pos[0] < 0 or pos[0] >= self.screen_size):
             in_game_screen = False
 
+        if(pos[1] < 0 or pos[1] >= self.screen_size):
+            in_game_screen = False
+
         return in_game_screen
+
+    def check_food(self, pos):
+        in_player_border = False
+        food = self.food
+        if(pos[0] == food[0] and pos[1] == food[1]):
+            in_player_border = True
+
+        return in_player_border
+
+    def check_danger(self, pos):
+        in_player_border = False
+        if(pos[0] == 0 or pos[1] == 0 or pos[0] == self.screen_size or pos[1]==self.screen_size):
+            in_player_border = True
+
+        for key, body in enumerate(self.players):
+            if(key != 0):
+                body_pos = body['actual_position']
+                if(pos[0] == body_pos[0] and pos[1] == body_pos[1]):
+                    in_player_border = True
+
+        return in_player_border
 
     def get_actions_set(self):
         return self.ACTIONS
 
     def get_observation(self):
-        player = self.players[0]['actual_position']
-        p_x = int(player[0]/self.CASE_SIZE) + 1
-        p_y = int(player[1]/self.CASE_SIZE) + 1
+        player = self.players[0]
+        direction = player['actual_direction']
+        pos = player['actual_position']
+        state_control = {}
+        pos_x = pos[0]
+        pos_y = pos[1]
+        if(direction == 'UP'):
+            front = [pos_x - 1, pos_y]
+            right = [pos_x, pos_y + 1]
+            left = [pos_x, pos_y - 1]
+            state_control['DANGER_FRONT'] = self.check_danger(pos)
+            state_control['DANGER_RIGHT'] = self.check_danger(pos)
+            state_control['DANGER_LEFT'] = self.check_danger(pos)
+            state_control['FOOD_FRONT'] = self.check_food(pos)
+            state_control['FOOD_RIGHT'] = self.check_food(pos)
+            state_control['FOOD_LEFT'] = self.check_food(pos)
+        elif(direction == 'LEFT'):
+            front = [pos_x, pos_y - 1]
+            right = [pos_x - 1, pos_y]
+            left = [pos_x + 1, pos_y]
+            state_control['DANGER_FRONT'] = self.check_danger(pos)
+            state_control['DANGER_RIGHT'] = self.check_danger(pos)
+            state_control['DANGER_LEFT'] = self.check_danger(pos)
+            state_control['FOOD_FRONT'] = self.check_food(pos)
+            state_control['FOOD_RIGHT'] = self.check_food(pos)
+            state_control['FOOD_LEFT'] = self.check_food(pos)
+        elif(direction == 'DOWN'):
+            front = [pos_x + 1, pos_y]
+            right = [pos_x, pos_y - 1]
+            left = [pos_x, pos_y + 1]
+            state_control['DANGER_FRONT'] = self.check_danger(pos)
+            state_control['DANGER_RIGHT'] = self.check_danger(pos)
+            state_control['DANGER_LEFT'] = self.check_danger(pos)
+            state_control['FOOD_FRONT'] = self.check_food(pos)
+            state_control['FOOD_RIGHT'] = self.check_food(pos)
+            state_control['FOOD_LEFT'] = self.check_food(pos)
+        elif(direction == 'RIGHT'):
+            front = [pos_x, pos_y + 1]
+            right = [pos_x + 1, pos_y]
+            left = [pos_x - 1, pos_y]
+            state_control['DANGER_FRONT'] = self.check_danger(pos)
+            state_control['DANGER_RIGHT'] = self.check_danger(pos)
+            state_control['DANGER_LEFT'] = self.check_danger(pos)
+            state_control['FOOD_FRONT'] = self.check_food(pos)
+            state_control['FOOD_RIGHT'] = self.check_food(pos)
+            state_control['FOOD_LEFT'] = self.check_food(pos)
+
+        p_x = int(pos_x/self.CASE_SIZE) + 1
+        p_y = int(pos_y/self.CASE_SIZE) + 1
 
         food = self.food
         f_x = int(food[0]/self.CASE_SIZE) + 1
         f_y = int(food[1]/self.CASE_SIZE) + 1
 
-        return {'snake_location': [p_x, p_y], 'food_location': [f_x, f_y], 'reward': self.get_reward()}
+        return {'snake_location': [p_x, p_y], 'state_control': state_control, 'reward': self.get_reward()}
