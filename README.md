@@ -52,4 +52,4 @@ Well, the snake game was the first example we found on the net of a working q-le
 
 It was kind of a side quest for us. Turns out to be more difficult than accounted for but here we are.
 
-You will find more detailled informations on how to use it (in French) in [this document](snake_ai/README.md)
+You will find more detailled informations on how to use it in [this document](snake_ai/README.md)

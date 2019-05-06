@@ -1,4 +1,4 @@
-# Installation et lancement du jeu
+# Install and and the game
 
 ## Requirements
 
@@ -7,13 +7,13 @@
 - tensorflow
 - PLE (PyGame Learning Environment)
 
-### Installation de tensorflow
+### tensorflow installation
 
-> L'installation est trop complexe sur Windows
+> Windows installation is a bit complex, so i recommend to use linux to test the game
 
 [Guide d'installation](https://www.tensorflow.org/install/pip)
 
-### Installation de PLE
+### PLE installation
 
 ```shell
 git clone https://github.com/ntasfi/PyGame-Learning-Environment
@@ -21,27 +21,25 @@ cd PyGame-Learning-Environment
 pip install -e .
 ```
 
-## Lancement du bot
+## Run the bot
 
-### Avec le jeu "maison"
+### "homemade" game
 
 ```python
 python3 snake_runner.py
 ```
 
-### Avec le jeu de PyGame Learning Environement
+### "PyGame Learning Environement" game
 
-Le jeu a besoin d'une limite de FPS sinon il se retrouve à buguer.
+The game need a fps limitation, or it will have many bugs.
 
 ```python
 python3 snake_ple_runner.py
 ```
 
-# Description des états
+# State description
 
-Le jeu retourne les informations suivantes :
+The game is returning the actual state :
 
-- Position X du joueur
-- Position Y du joueur
-- Zone de danger (Front, Left, Right) : Indique si la zone autour du joueur est dangeureuse. Soit à cause d'une bordure, soit à cause d'une partie du corps du joueur
-- Zone de nourriture (Front, Left, Right) : Indique si la zone autour du joueur a de la nourriture.
+- Danger proximity (Front, Left, Right) : Warn if the player is near a danger. There is two dangers. First is collision with a border. Second is a collision with a body part.
+- Food direction (Front, Left, Right) : Display in which direction player should look to get food.
